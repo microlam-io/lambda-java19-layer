@@ -1,6 +1,6 @@
 # AWS Lambda Java 17 Custom Runtime
 
-Based on original work from Mark Sailes [lambda-java17-layer](https://github.com/msailes/lambda-java17-layer)
+Based on original work from Mark Sailes: [lambda-java17-layer](https://github.com/msailes/lambda-java17-layer)
 
 With a few differences:
 
