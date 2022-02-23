@@ -13,34 +13,34 @@ With a few differences:
 The simplest way to bring the layer zip is to use the maven dependency plugin like this:
 
 ```pom.xml
-					<plugin>
-				        <groupId>org.apache.maven.plugins</groupId>
-				        <artifactId>maven-dependency-plugin</artifactId>
-				        <version>3.2.0</version>
-				        <executions>
-				          <execution>
-				            <id>copy</id>
-				            <phase>package</phase>
-				            <goals>
-				              <goal>copy</goal>
-				            </goals>
-				          </execution>
-				        </executions>
-				        <configuration>
-				          <artifactItems>
-				            <artifactItem>
-				              <groupId>io.microlam</groupId>
-				              <artifactId>lambda-java17-layer</artifactId>
-				              <version>17.0.2.8.1</version>
-							        <classifier>${java17layer.arch}</classifier>
-				              <type>zip</type>
-				            </artifactItem>
-				          </artifactItems>
-				          <outputDirectory>${project.build.directory}</outputDirectory>
-				          <overWriteReleases>false</overWriteReleases>
-				          <overWriteSnapshots>true</overWriteSnapshots>
-				        </configuration>
-			      </plugin>
+<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-dependency-plugin</artifactId>
+	<version>3.2.0</version>
+	<executions>
+		<execution>
+			<id>copy</id>
+			<phase>package</phase>
+			<goals>
+				<goal>copy</goal>
+			</goals>
+		</execution>
+	</executions>
+	<configuration>
+		<artifactItems>
+			<artifactItem>
+				<groupId>io.microlam</groupId>
+				<artifactId>lambda-java17-layer</artifactId>
+				<version>17.0.2.8.1</version>
+				<classifier>${java17layer.arch}</classifier>
+				<type>zip</type>
+			</artifactItem>
+		</artifactItems>
+		<outputDirectory>${project.build.directory}</outputDirectory>
+		<overWriteReleases>false</overWriteReleases>
+		<overWriteSnapshots>true</overWriteSnapshots>
+	</configuration>
+</plugin>
 ```
 
 Where property ``java17layer.arch`` may be ``amd64`` or ``arm64``.
