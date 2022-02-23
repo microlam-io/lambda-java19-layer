@@ -1,4 +1,5 @@
 # AWS Lambda Java 17 Custom Runtime
+![Maven Central](https://img.shields.io/maven-central/v/io.microlam/lambda-java17-layer)
 
 Based on original work from Mark Sailes: [lambda-java17-layer](https://github.com/msailes/lambda-java17-layer)
 
