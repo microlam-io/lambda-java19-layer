@@ -1,0 +1,607 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>io.microlam</groupId>
+  <artifactId>lambda-java17-layer</artifactId>
+  <version>17.0.2.8.1</version>
+  <packaging>pom</packaging>
+
+      <name>Lambda Layer for Java 17 for amd64 and arm64</name>
+      <description>Lambda Layer for Java 17 for amd64 and arm64</description>
+    <url>https://microlam.io</url>
+
+  <organization>
+    <name>MicroLam.io</name>
+    <url>https://microlam.io</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  	<developers>
+	    <developer>
+	      <name>Frank Afriat</name>
+	      <email>frank.afriat@microlam.io</email>
+	      <organization>MicroLam.io</organization>
+	      <organizationUrl>https://microlam.io</organizationUrl>
+	    </developer>
+	 </developers>
+
+	<scm>
+	  <connection>scm:git:git://github.com/microlam-io/${project.artifactId}.git</connection>
+	  <developerConnection>scm:git:ssh://git@github.com/microlam-io/${project.artifactId}.git</developerConnection>
+	  <url>https://github.com/microlam-io/${project.artifactId}/tree/master</url>
+	  <tag>HEAD</tag>
+  </scm>
+
+	<distributionManagement>
+	  <snapshotRepository>
+	    <id>ossrh</id>
+	    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+	  </snapshotRepository>
+	  <repository>
+    	<id>ossrh</id>
+    	<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+  	  </repository>
+	</distributionManagement>
+  
+ <properties>
+<!--	<release.version>11</release.version> -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <gpg.keyname>8011431D42D5A9ACBEF8B2A6D153D68FA8DF084C</gpg.keyname>
+    <junit.version>4.12</junit.version>
+	<sha256.arm64>f35513003c7129a7bb7870b2e8c67de71757a4c159a9f82d5700ede79e35ffbf</sha256.arm64>
+	<jdk17.url.arm64>https://corretto.aws/downloads/resources/17.0.2.8.1/amazon-corretto-17.0.2.8.1-linux-aarch64.tar.gz</jdk17.url.arm64>
+	<jdk17.folder.arm64>amazon-corretto-17.0.2.8.1-linux-aarch64</jdk17.folder.arm64>
+	<native.image.arguments.arm64>-Djdk.lang.Process.launchMechanism=vfork</native.image.arguments.arm64>
+	<arch.arm64>arm64</arch.arm64>
+	<sha256.amd64>a4cfc190f7c549bc8a3f260a8f3af45ddeae63fb10ccad70f914d411aec1e431</sha256.amd64>
+	<jdk17.url.amd64>https://corretto.aws/downloads/resources/17.0.2.8.1/amazon-corretto-17.0.2.8.1-linux-x64.tar.gz</jdk17.url.amd64>
+	<jdk17.folder.amd64>amazon-corretto-17.0.2.8.1-linux-x64</jdk17.folder.amd64>
+	<native.image.arguments.amd64></native.image.arguments.amd64>
+  </properties>
+
+	<build>
+
+		<plugins>
+
+<!--
+		  <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-compiler-plugin</artifactId>
+	        <version>3.8.0</version>
+	        <configuration>
+			  <release>${release.version}</release>
+	          <encoding>UTF-8</encoding>
+	          <forceJavacCompilerUse>true</forceJavacCompilerUse>
+	        </configuration>
+	      </plugin>
+-->
+			<plugin>
+		        <groupId>org.codehaus.mojo</groupId>
+		        <artifactId>build-helper-maven-plugin</artifactId>
+		        <version>3.3.0</version>
+		        <executions>
+		          <execution>
+		            <id>attach-artifacts-java17-amd64</id>
+		            <phase>verify</phase>
+		            <goals>
+		              <goal>attach-artifact</goal>
+		            </goals>
+		            <configuration>
+		              <artifacts>
+		                <artifact>
+		                  <file>${project.build.directory}/lambda-java17-layer-amd64.zip</file>
+		                  <type>zip</type>
+		                  <classifier>amd64</classifier>
+		                </artifact>
+		             </artifacts>
+		            </configuration>
+		          </execution>
+		          <execution>
+		            <id>attach-artifacts-java17-arm64</id>
+		            <phase>verify</phase>
+		            <goals>
+		              <goal>attach-artifact</goal>
+		            </goals>
+		            <configuration>
+		              <artifacts>
+		                <artifact>
+		                  <file>${project.build.directory}/lambda-java17-layer-arm64.zip</file>
+		                  <type>zip</type>
+		                  <classifier>arm64</classifier>
+		                </artifact>
+		             </artifacts>
+		            </configuration>
+		          </execution>
+		        </executions>
+		      </plugin>
+
+			<plugin>
+	         <groupId>io.fabric8</groupId>
+	         <artifactId>docker-maven-plugin</artifactId>
+	         <version>0.38.0</version>
+	
+				<executions>
+				  <execution>
+				    <id>build-lambda-java17-layer</id>
+					<phase>package</phase>
+				    <goals>
+					   <goal>stop</goal>
+				       <goal>build</goal>
+					   <goal>start</goal>
+				    </goals>
+				  </execution>
+				  <execution>
+				    <id>copy-lambda-java17-layer</id>
+					<phase>verify</phase>
+				    <goals>
+					   <goal>copy</goal>
+				    </goals>
+				  </execution>
+				  <execution>
+				    <id>stop-lambda-java17-layer-container</id>
+					<phase>install</phase>
+				    <goals>
+					   <goal>stop</goal>
+				    </goals>
+				  </execution>
+				</executions>
+	
+	            <configuration>
+	                <verbose>true</verbose>
+	
+	                <images>
+<!--
+	                    <image>
+	                        <name>${project.artifactId}:${project.version}-native-compile-java${native.version}-${native.arch}</name>
+	
+	                        <build>
+								<env>
+									<JAVA_TOOL_OPTIONS>${native.image.arguments}</JAVA_TOOL_OPTIONS>
+								</env>
+								<from>amazonlinux:2@sha256:${sha256}</from>
+
+								<workdir>opt</workdir>
+								<runCmds>
+									<runCmd>yum -y update</runCmd>
+									<runCmd>yum install -y tar zip gzip binutils</runCmd>
+									<runCmd>curl -4 -L ${jdk17.url} -o /usr/lib/jdk17.tar.gz</runCmd>
+									<runCmd>tar -xvzf /usr/lib/jdk17.tar.gz</runCmd>
+									<runCmd>mv ${jdk17.folder} /usr/lib/jdk17</runCmd>
+									<runCmd>/usr/lib/jdk17/bin/jlink - -add-modules "$(/usr/lib/jdk17/bin/java - -list-modules | cut -f1 -d'@' | tr '\n' ',')" - -compress 0 - -no-man-pages - -no-header-files - -strip-debug - -output /opt/jdk17-slim</runCmd>
+									<runCmd>find /opt/jdk17-slim/lib -name *.so -exec strip -p - -strip-unneeded {} \;</runCmd>
+									<runCmd>/usr/lib/jdk17/bin/java -Xshare:dump -version</runCmd>
+									<runCmd>rm /opt/jdk17-slim/lib/classlist</runCmd>
+									<runCmd>cp /usr/lib/jdk17/lib/server/classes.jsa /opt/jdk17-slim/lib/server/classes.jsa</runCmd>
+									<runCmd>zip -r /lambda-java17-layer-${native.arch}.zip *</runCmd>
+									<runCmd>mv /lambda-java17-layer-${native.arch}.zip /opt/</runCmd>
+								</runCmds>
+
+	                            <entryPoint>/opt/bootstrap ${lambda.handler}</entryPoint>
+
+									<assembly>
+									  <name>opt</name>
+									  <inline>
+										    <dependencySets>
+										        <dependencySet>
+
+										        	<useProjectArtifact>false</useProjectArtifact>
+
+													<includes>
+														<include>com.amazonaws:aws-lambda-java-core</include>
+														<include>com.amazonaws:aws-lambda-java-serialization</include>
+														<include>io.microlam:aws-lambda-java-runtime-interface-client</include>
+													</includes>
+										
+										        </dependencySet>
+										    
+										    </dependencySets>
+	
+										<fileSets>
+										    <fileSet>
+												<directory>${project.basedir}</directory>
+									     		<includes>
+													<include>bootstrap</include>
+												</includes>
+												<outputDirectory>/</outputDirectory>
+										    </fileSet>
+	
+									  	</fileSets>
+									  </inline>
+									</assembly>
+	
+	                        </build>
+							<run>
+								<ports>
+									<port>9000:8080</port>
+								</ports>
+								<volumes>
+									<bind>
+										<volume>~/.aws/credentials:/root/.aws/credentials</volume>
+									</bind>
+								</volumes>
+							</run>
+							 <copy>
+						          <entries>
+						            <entry>
+						              <containerPath>/opt/lambda-java17-layer-${native.arch}.zip</containerPath>
+						              <hostDirectory>${project.build.directory}</hostDirectory>
+						            </entry>
+						          </entries>
+							 </copy>
+	                    </image>
+-->
+	                    <image>
+	                        <name>${project.artifactId}-arm64</name>
+	
+	                        <build>
+								<env>
+									<JAVA_TOOL_OPTIONS>${native.image.arguments.arm64}</JAVA_TOOL_OPTIONS>
+								</env>
+								
+								<from>amazonlinux:2@sha256:${sha256.arm64}</from>
+
+								<workdir>opt</workdir>
+								<runCmds>
+									<runCmd>yum -y update</runCmd>
+									<runCmd>yum install -y tar zip gzip binutils</runCmd>
+									<runCmd>curl -4 -L ${jdk17.url.arm64} -o /usr/lib/jdk17.tar.gz</runCmd>
+									<runCmd>tar -xvzf /usr/lib/jdk17.tar.gz</runCmd>
+									<runCmd>mv ${jdk17.folder.arm64} /usr/lib/jdk17</runCmd>
+									<runCmd>/usr/lib/jdk17/bin/jlink --add-modules "$(/usr/lib/jdk17/bin/java --list-modules | cut -f1 -d'@' | tr '\n' ',')" --compress 0 --no-man-pages --no-header-files --strip-debug --output /opt/jdk17-slim</runCmd>
+									<runCmd>find /opt/jdk17-slim/lib -name *.so -exec strip -p --strip-unneeded {} \;</runCmd>
+									<runCmd>/usr/lib/jdk17/bin/java -Xshare:dump -version</runCmd>
+									<runCmd>rm /opt/jdk17-slim/lib/classlist</runCmd>
+									<runCmd>cp /usr/lib/jdk17/lib/server/classes.jsa /opt/jdk17-slim/lib/server/classes.jsa</runCmd>
+									<runCmd>zip -r /lambda-java17-layer-arm64.zip *</runCmd>
+									<runCmd>mv /lambda-java17-layer-arm64.zip /opt/</runCmd>
+								</runCmds>
+
+	                            <entryPoint>/opt/bootstrap</entryPoint>
+
+									<assembly>
+									  <name>opt</name>
+									  <inline>
+										    <dependencySets>
+										        <dependencySet>
+
+										        	<useProjectArtifact>false</useProjectArtifact>
+
+													<includes>
+														<include>com.amazonaws:aws-lambda-java-core</include>
+														<include>com.amazonaws:aws-lambda-java-serialization</include>
+														<include>io.microlam:aws-lambda-java-runtime-interface-client</include>
+													</includes>
+										
+										        </dependencySet>
+										    
+										    </dependencySets>
+	
+										<fileSets>
+										    <fileSet>
+												<directory>${project.basedir}</directory>
+									     		<includes>
+													<include>bootstrap</include>
+												</includes>
+												<outputDirectory>/</outputDirectory>
+										    </fileSet>
+	
+									  	</fileSets>
+									  </inline>
+									</assembly>
+	
+	                        </build>
+							<run>
+								<ports>
+									<port>9000:8080</port>
+								</ports>
+								<volumes>
+									<bind>
+										<volume>~/.aws/credentials:/root/.aws/credentials</volume>
+									</bind>
+								</volumes>
+							</run>
+							 <copy>
+						          <entries>
+						            <entry>
+						              <containerPath>/opt/lambda-java17-layer-arm64.zip</containerPath>
+						              <hostDirectory>${project.build.directory}</hostDirectory>
+						            </entry>
+						          </entries>
+							 </copy>
+	                    </image>
+	                    <image>
+	                        <name>${project.artifactId}-amd64</name>
+	
+	                        <build>
+<!--
+								<env>
+									<JAVA_TOOL_OPTIONS>${native.image.arguments.amd64}</JAVA_TOOL_OPTIONS>
+								</env>
+-->								
+								<from>amazonlinux:2@sha256:${sha256.amd64}</from>
+
+								<workdir>opt</workdir>
+								<runCmds>
+									<runCmd>yum -y update</runCmd>
+									<runCmd>yum install -y tar zip gzip binutils</runCmd>
+									<runCmd>curl -4 -L ${jdk17.url.amd64} -o /usr/lib/jdk17.tar.gz</runCmd>
+									<runCmd>tar -xvzf /usr/lib/jdk17.tar.gz</runCmd>
+									<runCmd>mv ${jdk17.folder.amd64} /usr/lib/jdk17</runCmd>
+									<runCmd>/usr/lib/jdk17/bin/jlink --add-modules "$(/usr/lib/jdk17/bin/java --list-modules | cut -f1 -d'@' | tr '\n' ',')" --compress 0 --no-man-pages --no-header-files --strip-debug --output /opt/jdk17-slim</runCmd>
+									<runCmd>find /opt/jdk17-slim/lib -name *.so -exec strip -p --strip-unneeded {} \;</runCmd>
+									<runCmd>/usr/lib/jdk17/bin/java -Xshare:dump -version</runCmd>
+									<runCmd>rm /opt/jdk17-slim/lib/classlist</runCmd>
+									<runCmd>cp /usr/lib/jdk17/lib/server/classes.jsa /opt/jdk17-slim/lib/server/classes.jsa</runCmd>
+									<runCmd>zip -r /lambda-java17-layer-amd64.zip *</runCmd>
+									<runCmd>mv /lambda-java17-layer-amd64.zip /opt/</runCmd>
+								</runCmds>
+
+	                            <entryPoint>/opt/bootstrap</entryPoint>
+
+									<assembly>
+									  <name>opt</name>
+									  <inline>
+										    <dependencySets>
+										        <dependencySet>
+
+										        	<useProjectArtifact>false</useProjectArtifact>
+
+													<includes>
+														<include>com.amazonaws:aws-lambda-java-core</include>
+														<include>com.amazonaws:aws-lambda-java-serialization</include>
+														<include>io.microlam:aws-lambda-java-runtime-interface-client</include>
+													</includes>
+										
+										        </dependencySet>
+										    
+										    </dependencySets>
+	
+										<fileSets>
+										    <fileSet>
+												<directory>${project.basedir}</directory>
+									     		<includes>
+													<include>bootstrap</include>
+												</includes>
+												<outputDirectory>/</outputDirectory>
+										    </fileSet>
+	
+									  	</fileSets>
+									  </inline>
+									</assembly>
+	
+	                        </build>
+							<run>
+								<ports>
+									<port>9000:8080</port>
+								</ports>
+								<volumes>
+									<bind>
+										<volume>~/.aws/credentials:/root/.aws/credentials</volume>
+									</bind>
+								</volumes>
+							</run>
+							 <copy>
+						          <entries>
+						            <entry>
+						              <containerPath>/opt/lambda-java17-layer-amd64.zip</containerPath>
+						              <hostDirectory>${project.build.directory}</hostDirectory>
+						            </entry>
+						          </entries>
+							 </copy>
+	                    </image>
+	                </images>
+	            </configuration>
+	         </plugin>
+
+      <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-gpg-plugin</artifactId>
+      <version>1.6</version>
+      <executions>
+        <execution>
+          <id>sign-artifacts</id>
+          <phase>verify</phase>
+          <goals>
+            <goal>sign</goal>
+          </goals>
+          <configuration>
+              <keyname>${gpg.keyname}</keyname>
+              <executable>/usr/local/bin/gpg</executable>
+          </configuration>    
+        </execution>
+      </executions>
+    </plugin>
+      
+     	<plugin>
+	      <groupId>org.sonatype.plugins</groupId>
+	      <artifactId>nexus-staging-maven-plugin</artifactId>
+	      <version>1.6.7</version>
+	      <extensions>true</extensions>
+	      <configuration>
+	        <serverId>ossrh</serverId>
+	        <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+	        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+	      </configuration>
+        <dependencies>
+        <dependency>
+          <groupId>com.thoughtworks.xstream</groupId>
+          <artifactId>xstream</artifactId>
+          <version>1.4.15</version> <!-- apparently this needs to be exactly this version -->
+        </dependency>
+      </dependencies>
+    	</plugin>
+    	
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>3.0.0-M4</version>
+      </plugin>
+
+		  <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-help-plugin</artifactId>
+	        <version>3.2.0</version>
+		  </plugin>
+
+		</plugins>
+	</build>
+
+
+  <dependencyManagement>
+    <dependencies>
+ 
+	<dependency>
+      <groupId>io.microlam</groupId>
+      <artifactId>microlam-bom</artifactId>
+      <version>0.3.3</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+
+  </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+  
+    <dependency>
+	  <groupId>io.microlam</groupId>
+  	  <artifactId>microlam-aws-lambda</artifactId>
+	</dependency>
+  
+  	<dependency>
+	  <groupId>com.google.code.gson</groupId>
+  	  <artifactId>gson</artifactId>
+	</dependency>
+  
+	<dependency>
+	    <groupId>io.netty</groupId>
+	    <artifactId>netty-codec</artifactId>
+	</dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    
+    <dependency>
+    	<groupId>io.microlam</groupId>
+    	<artifactId>slf4j-simple-lambda</artifactId>
+	</dependency>
+      
+ 	<dependency>
+ 		<groupId>org.slf4j</groupId>
+ 		<artifactId>log4j-over-slf4j</artifactId>
+ 	</dependency>
+        
+	<dependency>
+	  <groupId>com.amazonaws</groupId>
+	  <artifactId>aws-lambda-java-serialization</artifactId>
+	  <version>1.0.0</version>
+	</dependency>
+
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-lambda-java-events</artifactId>
+   </dependency>
+    
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-lambda-java-core</artifactId>
+    </dependency>
+
+	<dependency>
+	   <groupId>io.microlam</groupId>
+	   <artifactId>aws-lambda-java-runtime-interface-client</artifactId>
+	</dependency>
+
+	<dependency>
+	    <groupId>io.microlam</groupId>
+		<artifactId>aws-lambda-java-runtime-interface-client-native-config</artifactId>
+		<classifier>java17</classifier>
+	</dependency>
+
+    <dependency>
+      <groupId>io.microlam</groupId>
+      <artifactId>microlam-aws-devops</artifactId>
+	  <scope>test</scope>
+    </dependency>
+
+	<dependency>
+        <groupId>software.amazon.awssdk</groupId>
+    	<artifactId>auth</artifactId>
+        <scope>test</scope>
+	</dependency>
+
+	<dependency>
+        <groupId>software.amazon.awssdk</groupId>
+    	<artifactId>aws-core</artifactId>
+        <scope>test</scope>
+	</dependency>
+
+	<dependency>
+        <groupId>software.amazon.awssdk</groupId>
+    	<artifactId>regions</artifactId>
+        <scope>test</scope>
+	</dependency>
+
+	<dependency>
+        <groupId>software.amazon.awssdk</groupId>
+    	<artifactId>s3</artifactId>
+        <scope>test</scope>
+	</dependency>
+
+	<dependency>
+        <groupId>software.amazon.awssdk</groupId>
+    	<artifactId>lambda</artifactId>
+        <scope>test</scope>
+	</dependency>
+
+	<dependency>
+        <groupId>software.amazon.awssdk</groupId>
+    	<artifactId>sts</artifactId>
+        <scope>test</scope>
+	</dependency>
+
+    <dependency>
+        <groupId>software.amazon.awscdk</groupId>
+        <artifactId>aws-cdk-lib</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>software.constructs</groupId>
+        <artifactId>constructs</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+	<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<scope>test</scope>
+	</dependency>
+
+  </dependencies>
+
+    <profiles>
+
+	  <profile>
+        <id>build-layers</id>
+        <activation>
+        	<activeByDefault>true</activeByDefault>
+        </activation>
+		<build>
+			<plugins>
+			</plugins>
+		</build>
+      </profile>
+
+    </profiles>
+</project>
