@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.microlam</groupId>
   <artifactId>lambda-java17-layer</artifactId>
-  <version>17.0.5.8.1</version>
+  <version>17.0.5.8.1_1</version>
   <packaging>pom</packaging>
 
       <name>Lambda Layer for Java 17 for amd64 and arm64</name>
@@ -470,37 +470,7 @@
   </dependencyManagement>
 
   <dependencies>
-  
-    <dependency>
-	  <groupId>io.microlam</groupId>
-  	  <artifactId>microlam-aws-lambda</artifactId>
-	</dependency>
-  
-  	<dependency>
-	  <groupId>com.google.code.gson</groupId>
-  	  <artifactId>gson</artifactId>
-	</dependency>
-  
-	<dependency>
-	    <groupId>io.netty</groupId>
-	    <artifactId>netty-codec</artifactId>
-	</dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    
-    <dependency>
-    	<groupId>io.microlam</groupId>
-    	<artifactId>slf4j-simple-lambda</artifactId>
-	</dependency>
-      
- 	<dependency>
- 		<groupId>org.slf4j</groupId>
- 		<artifactId>log4j-over-slf4j</artifactId>
- 	</dependency>
-        
+          
 	<dependency>
 	  <groupId>com.amazonaws</groupId>
 	  <artifactId>aws-lambda-java-serialization</artifactId>
@@ -509,83 +479,12 @@
 
     <dependency>
       <groupId>com.amazonaws</groupId>
-      <artifactId>aws-lambda-java-events</artifactId>
-   </dependency>
-    
-    <dependency>
-      <groupId>com.amazonaws</groupId>
       <artifactId>aws-lambda-java-core</artifactId>
     </dependency>
 
 	<dependency>
 	   <groupId>io.microlam</groupId>
 	   <artifactId>aws-lambda-java-runtime-interface-client</artifactId>
-	</dependency>
-
-	<dependency>
-	    <groupId>io.microlam</groupId>
-		<artifactId>aws-lambda-java-runtime-interface-client-native-config</artifactId>
-		<classifier>java17</classifier>
-	</dependency>
-
-    <dependency>
-      <groupId>io.microlam</groupId>
-      <artifactId>microlam-aws-devops</artifactId>
-	  <scope>test</scope>
-    </dependency>
-
-	<dependency>
-        <groupId>software.amazon.awssdk</groupId>
-    	<artifactId>auth</artifactId>
-        <scope>test</scope>
-	</dependency>
-
-	<dependency>
-        <groupId>software.amazon.awssdk</groupId>
-    	<artifactId>aws-core</artifactId>
-        <scope>test</scope>
-	</dependency>
-
-	<dependency>
-        <groupId>software.amazon.awssdk</groupId>
-    	<artifactId>regions</artifactId>
-        <scope>test</scope>
-	</dependency>
-
-	<dependency>
-        <groupId>software.amazon.awssdk</groupId>
-    	<artifactId>s3</artifactId>
-        <scope>test</scope>
-	</dependency>
-
-	<dependency>
-        <groupId>software.amazon.awssdk</groupId>
-    	<artifactId>lambda</artifactId>
-        <scope>test</scope>
-	</dependency>
-
-	<dependency>
-        <groupId>software.amazon.awssdk</groupId>
-    	<artifactId>sts</artifactId>
-        <scope>test</scope>
-	</dependency>
-
-    <dependency>
-        <groupId>software.amazon.awscdk</groupId>
-        <artifactId>aws-cdk-lib</artifactId>
-        <scope>test</scope>
-    </dependency>
-
-    <dependency>
-        <groupId>software.constructs</groupId>
-        <artifactId>constructs</artifactId>
-        <scope>test</scope>
-    </dependency>
-
-	<dependency>
-		<groupId>junit</groupId>
-		<artifactId>junit</artifactId>
-		<scope>test</scope>
 	</dependency>
 
   </dependencies>
