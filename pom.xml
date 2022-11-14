@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.microlam</groupId>
-  <artifactId>lambda-java17-layer</artifactId>
-  <version>17.0.5.8.1_1</version>
+  <artifactId>lambda-java19-layer</artifactId>
+  <version>19.0.1.10.1</version>
   <packaging>pom</packaging>
 
-      <name>Lambda Layer for Java 17 for amd64 and arm64</name>
-      <description>Lambda Layer for Java 17 for amd64 and arm64</description>
+      <name>Lambda Layer for Java 19 for amd64 and arm64</name>
+      <description>Lambda Layer for Java 19 for amd64 and arm64</description>
     <url>https://microlam.io</url>
 
   <organization>
@@ -57,13 +57,14 @@
     <gpg.keyname>8011431D42D5A9ACBEF8B2A6D153D68FA8DF084C</gpg.keyname>
     <junit.version>4.12</junit.version>
 	<sha256.arm64>f35513003c7129a7bb7870b2e8c67de71757a4c159a9f82d5700ede79e35ffbf</sha256.arm64>
-	<jdk17.url.arm64>https://corretto.aws/downloads/resources/17.0.5.8.1/amazon-corretto-17.0.5.8.1-linux-aarch64.tar.gz</jdk17.url.arm64>
-	<jdk17.folder.arm64>amazon-corretto-17.0.5.8.1-linux-aarch64</jdk17.folder.arm64>
+	<jdk.version>19</jdk.version>
+	<jdk.url.arm64>https://corretto.aws/downloads/resources/${project.version}/amazon-corretto-${project.version}-linux-aarch64.tar.gz</jdk.url.arm64>
+	<jdk.folder.arm64>amazon-corretto-${project.version}-linux-aarch64</jdk.folder.arm64>
 	<native.image.arguments.arm64>-Djdk.lang.Process.launchMechanism=vfork</native.image.arguments.arm64>
 	<arch.arm64>arm64</arch.arm64>
 	<sha256.amd64>a4cfc190f7c549bc8a3f260a8f3af45ddeae63fb10ccad70f914d411aec1e431</sha256.amd64>
-	<jdk17.url.amd64>https://corretto.aws/downloads/resources/17.0.5.8.1/amazon-corretto-17.0.5.8.1-linux-x64.tar.gz</jdk17.url.amd64>
-	<jdk17.folder.amd64>amazon-corretto-17.0.5.8.1-linux-x64</jdk17.folder.amd64>
+	<jdk.url.amd64>https://corretto.aws/downloads/resources/${project.version}/amazon-corretto-${project.version}-linux-x64.tar.gz</jdk.url.amd64>
+	<jdk.folder.amd64>amazon-corretto-${project.version}-linux-x64</jdk.folder.amd64>
 	<native.image.arguments.amd64></native.image.arguments.amd64>
   </properties>
 
@@ -89,7 +90,7 @@
 		        <version>3.3.0</version>
 		        <executions>
 		          <execution>
-		            <id>attach-artifacts-java17-amd64</id>
+		            <id>attach-artifacts-java${jdk.version}-amd64</id>
 		            <phase>verify</phase>
 		            <goals>
 		              <goal>attach-artifact</goal>
@@ -97,7 +98,7 @@
 		            <configuration>
 		              <artifacts>
 		                <artifact>
-		                  <file>${project.build.directory}/lambda-java17-layer-amd64.zip</file>
+		                  <file>${project.build.directory}/lambda-java${jdk.version}-layer-amd64.zip</file>
 		                  <type>zip</type>
 		                  <classifier>amd64</classifier>
 		                </artifact>
@@ -105,7 +106,7 @@
 		            </configuration>
 		          </execution>
 		          <execution>
-		            <id>attach-artifacts-java17-arm64</id>
+		            <id>attach-artifacts-java${jdk.version}-arm64</id>
 		            <phase>verify</phase>
 		            <goals>
 		              <goal>attach-artifact</goal>
@@ -113,7 +114,7 @@
 		            <configuration>
 		              <artifacts>
 		                <artifact>
-		                  <file>${project.build.directory}/lambda-java17-layer-arm64.zip</file>
+		                  <file>${project.build.directory}/lambda-java${jdk.version}-layer-arm64.zip</file>
 		                  <type>zip</type>
 		                  <classifier>arm64</classifier>
 		                </artifact>
@@ -130,7 +131,7 @@
 	
 				<executions>
 				  <execution>
-				    <id>build-lambda-java17-layer</id>
+				    <id>build-lambda-java${jdk.version}-layer</id>
 					<phase>package</phase>
 				    <goals>
 					   <goal>stop</goal>
@@ -139,14 +140,14 @@
 				    </goals>
 				  </execution>
 				  <execution>
-				    <id>copy-lambda-java17-layer</id>
+				    <id>copy-lambda-java${jdk.version}-layer</id>
 					<phase>verify</phase>
 				    <goals>
 					   <goal>copy</goal>
 				    </goals>
 				  </execution>
 				  <execution>
-				    <id>stop-lambda-java17-layer-container</id>
+				    <id>stop-lambda-java${jdk.version}-layer-container</id>
 					<phase>install</phase>
 				    <goals>
 					   <goal>stop</goal>
@@ -252,16 +253,16 @@
 								<runCmds>
 									<runCmd>yum -y update</runCmd>
 									<runCmd>yum install -y tar zip gzip binutils</runCmd>
-									<runCmd>curl -4 -L ${jdk17.url.arm64} -o /usr/lib/jdk17.tar.gz</runCmd>
-									<runCmd>tar -xvzf /usr/lib/jdk17.tar.gz</runCmd>
-									<runCmd>mv ${jdk17.folder.arm64} /usr/lib/jdk17</runCmd>
-									<runCmd>/usr/lib/jdk17/bin/jlink --add-modules "$(/usr/lib/jdk17/bin/java --list-modules | cut -f1 -d'@' | tr '\n' ',')" --compress 0 --no-man-pages --no-header-files --strip-debug --output /opt/jdk17-slim</runCmd>
-									<runCmd>find /opt/jdk17-slim/lib -name *.so -exec strip -p --strip-unneeded {} \;</runCmd>
-									<runCmd>/usr/lib/jdk17/bin/java -Xshare:dump -version</runCmd>
-									<runCmd>rm /opt/jdk17-slim/lib/classlist</runCmd>
-									<runCmd>cp /usr/lib/jdk17/lib/server/classes.jsa /opt/jdk17-slim/lib/server/classes.jsa</runCmd>
-									<runCmd>zip -r /lambda-java17-layer-arm64.zip *</runCmd>
-									<runCmd>mv /lambda-java17-layer-arm64.zip /opt/</runCmd>
+									<runCmd>curl -4 -L ${jdk.url.arm64} -o /usr/lib/jdk.tar.gz</runCmd>
+									<runCmd>tar -xvzf /usr/lib/jdk.tar.gz</runCmd>
+									<runCmd>mv ${jdk.folder.arm64} /usr/lib/jdk</runCmd>
+									<runCmd>/usr/lib/jdk/bin/jlink --add-modules "$(/usr/lib/jdk/bin/java --list-modules | cut -f1 -d'@' | tr '\n' ',')" --compress 0 --no-man-pages --no-header-files --strip-debug --output /opt/jdk-slim</runCmd>
+									<runCmd>find /opt/jdk-slim/lib -name *.so -exec strip -p --strip-unneeded {} \;</runCmd>
+									<runCmd>/usr/lib/jdk/bin/java -Xshare:dump -version</runCmd>
+									<runCmd>rm /opt/jdk-slim/lib/classlist</runCmd>
+									<runCmd>cp /usr/lib/jdk/lib/server/classes.jsa /opt/jdk-slim/lib/server/classes.jsa</runCmd>
+									<runCmd>zip -r /lambda-java${jdk.version}-layer-arm64.zip *</runCmd>
+									<runCmd>mv /lambda-java${jdk.version}-layer-arm64.zip /opt/</runCmd>
 								</runCmds>
 
 	                            <entryPoint>/opt/bootstrap</entryPoint>
@@ -311,7 +312,7 @@
 							 <copy>
 						          <entries>
 						            <entry>
-						              <containerPath>/opt/lambda-java17-layer-arm64.zip</containerPath>
+						              <containerPath>/opt/lambda-java${jdk.version}-layer-arm64.zip</containerPath>
 						              <hostDirectory>${project.build.directory}</hostDirectory>
 						            </entry>
 						          </entries>
@@ -332,16 +333,16 @@
 								<runCmds>
 									<runCmd>yum -y update</runCmd>
 									<runCmd>yum install -y tar zip gzip binutils</runCmd>
-									<runCmd>curl -4 -L ${jdk17.url.amd64} -o /usr/lib/jdk17.tar.gz</runCmd>
-									<runCmd>tar -xvzf /usr/lib/jdk17.tar.gz</runCmd>
-									<runCmd>mv ${jdk17.folder.amd64} /usr/lib/jdk17</runCmd>
-									<runCmd>/usr/lib/jdk17/bin/jlink --add-modules "$(/usr/lib/jdk17/bin/java --list-modules | cut -f1 -d'@' | tr '\n' ',')" --compress 0 --no-man-pages --no-header-files --strip-debug --output /opt/jdk17-slim</runCmd>
-									<runCmd>find /opt/jdk17-slim/lib -name *.so -exec strip -p --strip-unneeded {} \;</runCmd>
-									<runCmd>/usr/lib/jdk17/bin/java -Xshare:dump -version</runCmd>
-									<runCmd>rm /opt/jdk17-slim/lib/classlist</runCmd>
-									<runCmd>cp /usr/lib/jdk17/lib/server/classes.jsa /opt/jdk17-slim/lib/server/classes.jsa</runCmd>
-									<runCmd>zip -r /lambda-java17-layer-amd64.zip *</runCmd>
-									<runCmd>mv /lambda-java17-layer-amd64.zip /opt/</runCmd>
+									<runCmd>curl -4 -L ${jdk.url.amd64} -o /usr/lib/jdk.tar.gz</runCmd>
+									<runCmd>tar -xvzf /usr/lib/jdk.tar.gz</runCmd>
+									<runCmd>mv ${jdk.folder.amd64} /usr/lib/jdk</runCmd>
+									<runCmd>/usr/lib/jdk/bin/jlink --add-modules "$(/usr/lib/jdk/bin/java --list-modules | cut -f1 -d'@' | tr '\n' ',')" --compress 0 --no-man-pages --no-header-files --strip-debug --output /opt/jdk-slim</runCmd>
+									<runCmd>find /opt/jdk-slim/lib -name *.so -exec strip -p --strip-unneeded {} \;</runCmd>
+									<runCmd>/usr/lib/jdk/bin/java -Xshare:dump -version</runCmd>
+									<runCmd>rm /opt/jdk-slim/lib/classlist</runCmd>
+									<runCmd>cp /usr/lib/jdk/lib/server/classes.jsa /opt/jdk-slim/lib/server/classes.jsa</runCmd>
+									<runCmd>zip -r /lambda-java${jdk.version}-layer-amd64.zip *</runCmd>
+									<runCmd>mv /lambda-java${jdk.version}-layer-amd64.zip /opt/</runCmd>
 								</runCmds>
 
 	                            <entryPoint>/opt/bootstrap</entryPoint>
@@ -391,7 +392,7 @@
 							 <copy>
 						          <entries>
 						            <entry>
-						              <containerPath>/opt/lambda-java17-layer-amd64.zip</containerPath>
+						              <containerPath>/opt/lambda-java${jdk.version}-layer-amd64.zip</containerPath>
 						              <hostDirectory>${project.build.directory}</hostDirectory>
 						            </entry>
 						          </entries>
