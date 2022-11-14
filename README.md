@@ -55,7 +55,7 @@ Architecture architecture = Architecture.X86_64; // Architecture.ARM_64 or Archi
 //Do not modify this
 String arch = (architecture == Architecture.ARM_64)?"arm64":"amd64";
         
-LayerVersion java17layer = new LayerVersion(this, "Java19Layer-"+ arch, LayerVersionProps.builder()
+LayerVersion java19layer = new LayerVersion(this, "Java19Layer-"+ arch, LayerVersionProps.builder()
 				        .layerVersionName("Java19Layer-" + arch)
 				        .description("Java 19 " + arch)
 				        .compatibleRuntimes(Arrays.asList(software.amazon.awscdk.services.lambda.Runtime.PROVIDED_AL2))
