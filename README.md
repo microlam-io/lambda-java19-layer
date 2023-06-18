@@ -1,4 +1,4 @@
-# AWS Lambda Java 19 Custom Runtime
+19.0.2.7.1# AWS Lambda Java 19 Custom Runtime
 ![Maven Central](https://img.shields.io/maven-central/v/io.microlam/lambda-java19-layer)
 
 Based on original work from Mark Sailes: [lambda-java17-layer](https://github.com/msailes/lambda-java17-layer)
@@ -32,7 +32,7 @@ The simplest way to bring the layer zip is to use the maven dependency plugin li
 			<artifactItem>
 				<groupId>io.microlam</groupId>
 				<artifactId>lambda-java19-layer</artifactId>
-				<version>19.0.1.10.1</version>
+				<version>19.0.2.7.1</version>
 				<classifier>${java19layer.arch}</classifier>
 				<type>zip</type>
 			</artifactItem>
@@ -59,7 +59,7 @@ LayerVersion java19layer = new LayerVersion(this, "Java19Layer-"+ arch, LayerVer
 				        .layerVersionName("Java19Layer-" + arch)
 				        .description("Java 19 " + arch)
 				        .compatibleRuntimes(Arrays.asList(software.amazon.awscdk.services.lambda.Runtime.PROVIDED_AL2))
-				        .code(Code.fromAsset("target/lambda-java19-layer-19.0.1.10.1-"+ arch + ".zip"))
+				        .code(Code.fromAsset("target/lambda-java19-layer-19.0.2.7.1-"+ arch + ".zip"))
 				        .build());
 
 Function handlerBuilder = Function.Builder.create(this, "SimpleLambda")			    		  

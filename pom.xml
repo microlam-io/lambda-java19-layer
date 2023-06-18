@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.microlam</groupId>
   <artifactId>lambda-java19-layer</artifactId>
-  <version>19.0.1.10.1</version>
+  <version>19.0.2.7.1</version>
   <packaging>pom</packaging>
 
       <name>Lambda Layer for Java 19 for amd64 and arm64</name>
